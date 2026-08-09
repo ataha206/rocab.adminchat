@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "853596077911",
+    "firebase_url": "https://rocab-driverapp.firebaseio.com",
+    "project_id": "rocab-driverapp",
+    "storage_bucket": "rocab-driverapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:853596077911:android:5959a8bdf2c55c6fd48812",
+        "android_client_info": {
+          "package_name": "com.arttech.roccab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQVSx8P42dOcQAFirlu7X4_AFUDcAYhK4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:853596077911:android:8705f3aa184e8762d48812",
+        "android_client_info": {
+          "package_name": "ps.arttech.driver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQVSx8P42dOcQAFirlu7X4_AFUDcAYhK4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:853596077911:android:88ddfedbfd4fb257d48812",
+        "android_client_info": {
+          "package_name": "ps.rocab.support"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQVSx8P42dOcQAFirlu7X4_AFUDcAYhK4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
