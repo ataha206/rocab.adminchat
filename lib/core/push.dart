@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 
 import 'api.dart';
 import 'session.dart';
@@ -27,15 +30,39 @@ class Push {
   static Future<void> registerIfLoggedIn() async {
     if (!Session.isLoggedIn) return;
     try {
+      // iOS mints the FCM token only after the APNs token is available, which
+      // can lag a second or two after launch. Getting the FCM token too early
+      // returns null and the device silently never registers — so wait for the
+      // APNs token first (up to ~8s) before asking for the FCM token.
+      if (Platform.isIOS) {
+        var apns = await FirebaseMessaging.instance.getAPNSToken();
+        for (var i = 0; apns == null && i < 8; i++) {
+          await Future.delayed(const Duration(seconds: 1));
+          apns = await FirebaseMessaging.instance.getAPNSToken();
+        }
+        if (apns == null && kDebugMode) {
+          debugPrint('Push: APNs token still null — check the APNs key in '
+              'the Firebase project and Push Notifications capability.');
+        }
+      }
+
       final token = await FirebaseMessaging.instance.getToken();
-      if (token != null) await _register(token);
-    } catch (_) {}
+      if (token != null) {
+        await _register(token);
+      } else if (kDebugMode) {
+        debugPrint('Push: FCM getToken() returned null — device not registered.');
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('Push.registerIfLoggedIn failed: $e');
+    }
   }
 
   static Future<void> _register(String token) async {
     if (!Session.isLoggedIn) return;
     try {
       await Api.registerDevice(token);
-    } catch (_) {}
+    } catch (e) {
+      if (kDebugMode) debugPrint('Push.registerDevice failed: $e');
+    }
   }
 }
