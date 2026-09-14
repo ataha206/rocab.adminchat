@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -21,9 +22,30 @@ class Push {
       await Firebase.initializeApp();
       await FirebaseMessaging.instance.requestPermission();
       FirebaseMessaging.instance.onTokenRefresh.listen(_register);
+      if (kDebugMode) unawaited(_debugLogTokens());
       await registerIfLoggedIn();
     } catch (_) {
       // Missing google-services config must never break the app.
+    }
+  }
+
+  /// Debug builds only: prints the APNs and FCM tokens at launch, logged in or
+  /// not, so the push setup can be verified from the console.
+  static Future<void> _debugLogTokens() async {
+    try {
+      if (Platform.isIOS) {
+        String? apns;
+        for (var i = 0; apns == null && i < 10; i++) {
+          apns = await FirebaseMessaging.instance.getAPNSToken();
+          if (apns == null) await Future.delayed(const Duration(seconds: 1));
+        }
+        debugPrint('Push[debug]: APNs token = ${apns ?? 'NULL'}');
+      }
+      final fcm = await FirebaseMessaging.instance.getToken();
+      debugPrint('Push[debug]: FCM token = ${fcm ?? 'NULL'}');
+      debugPrint('Push[debug]: Firebase project = ${Firebase.app().options.projectId}');
+    } catch (e) {
+      debugPrint('Push[debug]: token lookup failed: $e');
     }
   }
 
