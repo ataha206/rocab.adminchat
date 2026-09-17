@@ -49,6 +49,10 @@
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>لإرفاق صورة من معرض الصور في محادثة الدعم</string>
+	<key>NSCameraUsageDescription</key>
+	<string>لتصوير صورة وإرسالها في محادثة الدعم</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

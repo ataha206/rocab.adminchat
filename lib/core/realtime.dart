@@ -13,8 +13,12 @@ class Realtime {
   HubConnection? _hub;
   final StreamController<Map<String, dynamic>> _messages =
       StreamController.broadcast();
+  final StreamController<int> _reads = StreamController.broadcast();
 
   Stream<Map<String, dynamic>> get onMessage => _messages.stream;
+
+  /// Message ids the user has opened (hub "MessageRead").
+  Stream<int> get onMessageRead => _reads.stream;
 
   Future<void> connect() async {
     if (_hub != null) return;
@@ -26,6 +30,12 @@ class Realtime {
       final a = args;
       if (a != null && a.isNotEmpty && a.first is Map) {
         _messages.add(Map<String, dynamic>.from(a.first as Map));
+      }
+    });
+    hub.on('MessageRead', (args) {
+      final a = args;
+      if (a != null && a.isNotEmpty && a.first is num) {
+        _reads.add((a.first as num).toInt());
       }
     });
     _hub = hub;
