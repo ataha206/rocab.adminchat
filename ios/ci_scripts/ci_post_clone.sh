@@ -12,9 +12,6 @@ export PATH="$PATH:$HOME/flutter/bin"
 flutter --disable-analytics
 flutter precache --ios
 
-# CocoaPods (needed before `flutter build`, which runs pod install itself)
-HOMEBREW_NO_AUTO_UPDATE=1 brew install cocoapods
-
 cd "$REPO"
 flutter pub get
 
@@ -28,6 +25,12 @@ for kv in $DART_DEFINES; do DEFINES="$DEFINES --dart-define=$kv"; done
 # Writes ios/Flutter/Generated.xcconfig (release mode, build number from Xcode Cloud)
 flutter build ios --config-only --release --no-codesign --build-number="$CI_BUILD_NUMBER" $DEFINES
 
-cd ios && pod install
+# CocoaPods only if the project uses it. This app's plugins are Swift packages,
+# so there is normally no Podfile; `flutter build --config-only` creates one only
+# when a plugin still needs CocoaPods.
+if [ -f ios/Podfile ]; then
+  HOMEBREW_NO_AUTO_UPDATE=1 brew install cocoapods
+  (cd ios && pod install)
+fi
 
 exit 0
