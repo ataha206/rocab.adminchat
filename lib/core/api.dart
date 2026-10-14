@@ -61,6 +61,12 @@ class ChatMessage {
   }
 }
 
+/// The saved bearer token is no longer accepted: the user has to sign in again.
+class SessionExpiredException implements Exception {
+  @override
+  String toString() => 'انتهت صلاحية الجلسة، سجّل الدخول مرة أخرى';
+}
+
 /// HTTP client for api/v3/mobile/admin-chat.
 class Api {
   /// Mirrors the backend limit (SupportChatService.MaxImageBytes).
@@ -82,9 +88,12 @@ class Api {
   static dynamic _decode(http.Response r) {
     final body = r.body.isEmpty ? null : jsonDecode(utf8.decode(r.bodyBytes));
     if (r.statusCode >= 200 && r.statusCode < 300) return body;
-    final msg = body is Map && body['error'] != null
-        ? _humanError(body['error'].toString())
-        : 'HTTP ${r.statusCode}';
+    final hasError = body is Map && body['error'] != null;
+    // A bare 401 (no error body) is the server rejecting our bearer token:
+    // expired (30-day lifetime) or signed with another secret. Login failures
+    // carry an error message and stay ordinary exceptions.
+    if (r.statusCode == 401 && !hasError) throw SessionExpiredException();
+    final msg = hasError ? _humanError(body['error'].toString()) : 'HTTP ${r.statusCode}';
     throw Exception(msg);
   }
 

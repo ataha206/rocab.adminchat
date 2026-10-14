@@ -49,6 +49,16 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
         _loading = false;
         _error = null;
       });
+    } on SessionExpiredException {
+      // Token expired or rejected: back to the login screen instead of a
+      // bare "HTTP 401" with no way out.
+      await Realtime.instance.disconnect();
+      await Session.clear();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('انتهت صلاحية الجلسة، سجّل الدخول مرة أخرى')));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const LoginScreen()), (_) => false);
     } catch (e) {
       if (!mounted) return;
       setState(() {
