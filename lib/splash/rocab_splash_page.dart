@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 /// Visual layer of the splash: dark radial backdrop, drifting gold particles,
-/// a golden route trace that forms the logo frame, the logo asset revealed
+/// a teal route trace that forms the logo frame, the logo asset revealed
 /// left-to-right, an orbiting dot that lands into the mark, a diagonal shine
 /// sweep and a final ring pulse, with the brand wordmark below.
 ///
@@ -130,7 +130,7 @@ class _RocabSplashVisualState extends State<RocabSplashVisual>
                   center: Alignment(0, -0.12),
                   radius: 1.05,
                   colors: [
-                    Color(0xFF17120A),
+                    Color(0xFF06201C),
                     Color(0xFF050505),
                     Colors.black,
                   ],
@@ -224,7 +224,7 @@ class _RocabSplashVisualState extends State<RocabSplashVisual>
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFFFB900).withValues(alpha: 0.13),
+              color: const Color(0xFF128C7E).withValues(alpha: 0.13),
               blurRadius: 80,
               spreadRadius: 18,
             ),
@@ -270,10 +270,10 @@ class _RocabSplashVisualState extends State<RocabSplashVisual>
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.black,
-            border: Border.all(color: const Color(0xFFFFB900), width: 2),
+            border: Border.all(color: const Color(0xFF128C7E), width: 2),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFFFB900).withValues(alpha: 0.5 * p),
+                color: const Color(0xFF128C7E).withValues(alpha: 0.5 * p),
                 blurRadius: 18,
                 spreadRadius: 2,
               ),
@@ -330,12 +330,12 @@ class _RocabSplashVisualState extends State<RocabSplashVisual>
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: const Color(0xFFFFBE00).withValues(alpha: 1 - p),
+              color: const Color(0xFF128C7E).withValues(alpha: 1 - p),
               width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFFFBE00).withValues(alpha: 0.25 * p),
+                color: const Color(0xFF128C7E).withValues(alpha: 0.25 * p),
                 blurRadius: 48,
                 spreadRadius: 8,
               ),
@@ -379,9 +379,9 @@ class _LogoTracePainter extends CustomPainter {
       ..strokeWidth = 5
       ..shader = const LinearGradient(
         colors: [
-          Color(0x00FFB900),
-          Color(0xFFFFD76B),
-          Color(0xFFFFB900),
+          Color(0x00128C7E),
+          Color(0xFF25D366),
+          Color(0xFF128C7E),
         ],
       ).createShader(Offset.zero & size);
 
@@ -389,7 +389,7 @@ class _LogoTracePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 15
-      ..color = const Color(0xFFFFB900).withValues(alpha: 0.18)
+      ..color = const Color(0xFF128C7E).withValues(alpha: 0.18)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
 
     final path = Path()
@@ -406,7 +406,7 @@ class _LogoTracePainter extends CustomPainter {
     final tangent = metric.getTangentForOffset(metric.length * progress);
     if (tangent != null) {
       final dotPaint = Paint()
-        ..color = const Color(0xFFFFE6A0)
+        ..color = const Color(0xFFB9F2E4)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
       canvas.drawCircle(tangent.position, 7, dotPaint);
     }
@@ -437,7 +437,7 @@ class _BackgroundParticlesPainter extends CustomPainter {
       final y = (baseY - progress * (22 + (i % 5) * 5)) % size.height;
       final alpha = 0.025 + ((i % 4) * 0.012);
 
-      paint.color = const Color(0xFFFFBE00).withValues(alpha: alpha);
+      paint.color = const Color(0xFF128C7E).withValues(alpha: alpha);
       canvas.drawCircle(Offset(x, y), 0.8 + (i % 3) * 0.45, paint);
     }
   }

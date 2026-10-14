@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
             constraints: const BoxConstraints(maxWidth: 380),
             child: Column(
               children: [
-                const Icon(Icons.support_agent, size: 72, color: Color(0xFFB91C1C)),
+                Icon(Icons.support_agent, size: 72, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(height: 8),
                 Text('دعم ركاب',
                     style: Theme.of(context).textTheme.headlineSmall),
