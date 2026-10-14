@@ -54,14 +54,19 @@ class _SplashGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RocabSplashVisual(
-      onAnimationCompleted: () {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (_) => Session.isLoggedIn
-              ? const ConversationsScreen()
-              : const LoginScreen(),
-        ));
-      },
+    // Material supplies the DefaultTextStyle; without it Flutter paints the
+    // splash texts with the "missing ancestor" style (yellow double underline).
+    return Material(
+      color: Colors.black,
+      child: RocabSplashVisual(
+        onAnimationCompleted: () {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (_) => Session.isLoggedIn
+                ? const ConversationsScreen()
+                : const LoginScreen(),
+          ));
+        },
+      ),
     );
   }
 }
