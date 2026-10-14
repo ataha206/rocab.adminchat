@@ -15,27 +15,41 @@ class ConversationsScreen extends StatefulWidget {
   State<ConversationsScreen> createState() => _ConversationsScreenState();
 }
 
-class _ConversationsScreenState extends State<ConversationsScreen> {
+class _ConversationsScreenState extends State<ConversationsScreen>
+    with WidgetsBindingObserver {
   List<Conversation> _items = const [];
   bool _loading = true;
   String? _error;
   StreamSubscription? _sub;
+  StreamSubscription? _resyncSub;
   Timer? _poll;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _load();
     Realtime.instance.connect();
     // Any incoming message re-sorts/updates the list.
     _sub = Realtime.instance.onMessage.listen((_) => _load());
+    _resyncSub = Realtime.instance.onResync.listen((_) => _load());
     // Safety net when the socket is down.
     _poll = Timer.periodic(const Duration(seconds: 30), (_) => _load());
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      Realtime.instance.ensureConnected();
+      _load();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _sub?.cancel();
+    _resyncSub?.cancel();
     _poll?.cancel();
     super.dispose();
   }

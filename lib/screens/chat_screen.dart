@@ -15,7 +15,7 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   List<ChatMessage> _messages = const [];
   final _input = TextEditingController();
   final _scroll = ScrollController();
@@ -23,14 +23,18 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _sending = false;
   StreamSubscription? _sub;
   StreamSubscription? _readSub;
+  StreamSubscription? _resyncSub;
 
   Conversation get c => widget.conversation;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _load();
     Api.seen(c.userId, c.userType);
+    // Hub came back after a gap: whatever arrived meanwhile was not pushed.
+    _resyncSub = Realtime.instance.onResync.listen((_) => _refresh());
     _sub = Realtime.instance.onMessage.listen((m) {
       if (m['userId'] == c.userId &&
           (m['userType'] as String?)?.toLowerCase() == c.userType) {
@@ -46,10 +50,28 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  /// Back from the background: the socket was most likely cut while away, so
+  /// reconnect and fetch what we missed instead of waiting for the user to
+  /// leave and reopen the conversation.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      Realtime.instance.ensureConnected();
+      _refresh();
+    }
+  }
+
+  void _refresh() {
+    _load();
+    Api.seen(c.userId, c.userType);
+  }
+
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _sub?.cancel();
     _readSub?.cancel();
+    _resyncSub?.cancel();
     _input.dispose();
     _scroll.dispose();
     super.dispose();
