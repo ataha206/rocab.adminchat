@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../core/api.dart';
 import '../core/realtime.dart';
+import 'user_profile_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   final Conversation conversation;
@@ -197,22 +198,41 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     ));
   }
 
+  /// Profile / rides / wallet of the person we are talking to.
+  void _openProfile() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => UserProfileScreen(
+        userId: c.userId,
+        userType: c.userType,
+        name: c.name,
+      ),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('${c.name} (${c.userType == 'driver' ? 'سائق' : 'راكب'})',
-                style: const TextStyle(fontSize: 17)),
-            if (c.details.isNotEmpty)
-              Text(c.details,
-                  style: const TextStyle(
-                      fontSize: 12, color: Colors.white70)),
-          ],
+        // WhatsApp-style: tapping the header opens the contact's profile.
+        title: InkWell(
+          onTap: _openProfile,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('${c.name} (${c.userType == 'driver' ? 'سائق' : 'راكب'})',
+                  style: const TextStyle(fontSize: 17)),
+              if (c.details.isNotEmpty)
+                Text(c.details,
+                    style: const TextStyle(
+                        fontSize: 12, color: Colors.white70)),
+            ],
+          ),
         ),
         actions: [
+          IconButton(
+              icon: const Icon(Icons.person_search_outlined),
+              tooltip: 'ملف المستخدم',
+              onPressed: _openProfile),
           IconButton(
               icon: const Icon(Icons.task_alt),
               tooltip: 'إغلاق المحادثة',

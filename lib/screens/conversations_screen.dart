@@ -7,6 +7,7 @@ import '../core/realtime.dart';
 import '../core/session.dart';
 import 'chat_screen.dart';
 import 'login_screen.dart';
+import 'signups_screen.dart';
 
 class ConversationsScreen extends StatefulWidget {
   const ConversationsScreen({super.key});
@@ -88,6 +89,12 @@ class _ConversationsScreenState extends State<ConversationsScreen>
       appBar: AppBar(
         title: const Text('محادثات الدعم'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.person_add_alt_1_outlined),
+            tooltip: 'طلبات اشتراك السائقين',
+            onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SignupsScreen())),
+          ),
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
           PopupMenuButton<String>(
             onSelected: (v) async {
