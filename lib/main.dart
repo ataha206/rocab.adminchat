@@ -1,13 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'core/push.dart';
 import 'core/session.dart';
+import 'core/tls.dart';
 import 'screens/conversations_screen.dart';
 import 'screens/login_screen.dart';
 import 'splash/rocab_splash_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Bundled CA roots for every HttpClient (package:http included); see core/tls.dart.
+  HttpOverrides.global = AppHttpOverrides();
+  await initTlsTrustStore();
   await Session.load();
   // Registers this device for support notifications (no-op until login).
   await Push.init();
